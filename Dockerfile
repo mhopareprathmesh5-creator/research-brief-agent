@@ -17,16 +17,18 @@ COPY --chown=appuser:appuser . .
 
 USER appuser
 
-# Spaces expects the app on 7860. Streamlit defaults to 8501, so it is
-# set explicitly here.
+# Render assigns a port at run time through the PORT variable, so the
+# port cannot be hardcoded. 7860 is the local default when PORT is unset.
 EXPOSE 7860
 
-ENV STREAMLIT_SERVER_PORT=7860 \
-    STREAMLIT_SERVER_ADDRESS=0.0.0.0 \
+ENV PORT=7860 \
     STREAMLIT_SERVER_HEADLESS=true \
     STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
 
 # No API key anywhere in this file or in the image (Task 4).
 # It is supplied at run time with -e GOOGLE_API_KEY=... locally, or from
-# the platform's secrets settings when deployed.
-CMD ["streamlit", "run", "app.py", "--server.port=7860", "--server.address=0.0.0.0"]
+# the platform's environment settings when deployed.
+#
+# Shell form is required so that ${PORT} is expanded at container start.
+# The exec form would pass the literal string "${PORT}" to Streamlit.
+CMD ["sh", "-c", "streamlit run app.py --server.port=${PORT:-7860} --server.address=0.0.0.0"]
