@@ -1,0 +1,38 @@
+name: CI
+
+# Task 5 — runs automatically on every push and pull request to main.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run automated checks
+        # PYTHONPATH lets the tests import workflow.py from the repo root.
+        # No API key is needed: the tests cover the pure helpers only.
+        run: PYTHONPATH=. pytest tests/ -v
+
+      - name: Build the Docker image
+        # Proves the Dockerfile is valid on every push. The image is not
+        # pushed anywhere — Hugging Face Spaces builds its own from the
+        # same Dockerfile when main changes.
+        run: docker build -t research-brief-agent:${{ github.sha }} .

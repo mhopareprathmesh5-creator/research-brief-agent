@@ -1,0 +1,16 @@
+# Secrets — never commit these (Task 2)
+.env
+*.env
+secrets.toml
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Tooling
+.pytest_cache/
+.DS_Store
