@@ -26,7 +26,7 @@ logger = logging.getLogger("app")
 
 st.set_page_config(page_title="Research Brief Agent", page_icon="::", layout="centered")
 
-st.title("Research Brief Agent")
+st.title("AI Research Brief Generator")
 st.caption(
     "Enter a topic. The agent searches the web, then summarises the findings "
     "into exactly three bullet points."
